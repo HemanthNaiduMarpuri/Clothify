@@ -4,6 +4,7 @@ Clothify is a full-stack **Django-based e-commerce web application** for online 
 It allows users to browse products, manage carts, apply coupons, place orders, and authenticate using Google OAuth.
 
 🔗 **Live Demo**: https://clothify-v8gz.onrender.com/
+But Currently the live demo is under maintanence due to oauth issues it gonna resolved with in a short period of time
 
 ---
 
