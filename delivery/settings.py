@@ -127,7 +127,7 @@ DATABASES = {
 }
 
 
-
+SOCIALACCOUNT_PROVIDERS = {}
 
 
 # Password validation
@@ -204,3 +204,16 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
+if os.environ.get("RENDER") == "true":
+    try:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        if not User.objects.filter(is_superuser=True).exists():
+            User.objects.create_superuser(
+                username="admin",
+                email="admin@clothify.com",
+                password="Admin@123"
+            )
+    except Exception:
+        pass
