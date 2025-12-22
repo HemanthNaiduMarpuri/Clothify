@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container my-4">
+  <h3 class="mb-3">My Orders</h3>
+  <form method="get" class="mb-3">
+    <label class="form-label">Filter by status</label>
+    <select name="status"
+            class="form-select w-auto d-inline"
+            onchange="this.form.submit()">
+
+      <option value="paid" {% if request.GET.status == "paid" %}selected{% endif %}>
+        Paid
+      </option>
+      <option value="ongoing" {% if request.GET.status == "ongoing" %}selected{% endif %}>
+        Ongoing
+      </option>
+      <option value="delivered" {% if request.GET.status == "delivered" %}selected{% endif %}>
+        Delivered
+      </option>
+      <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>
+        Pending
+      </option>
+      <option value="cancelled" {% if request.GET.status == "cancelled" %}selected{% endif %}>
+        Returned
+      </option>
+
+    </select>
+  </form>
+
+  {% if orders %}
+    <div class="list-group">
+
+      {% for order in orders %}
+        <div class="list-group-item mb-2">
+          <div class="d-flex justify-content-between">
+            <div>
+              <strong>Order #{{ order.id }}</strong><br>
+              <small class="text-muted">
+                {{ order.created_at|date:"d M Y, h:i A" }}
+              </small>
+            </div>
+
+            <div class="text-end">
+              <span class="badge bg-success text-uppercase">
+                {{ order.status }}
+              </span><br>
+              ₹{{ order.total_amount }}
+            </div>
+          </div>
+
+          {% if order.is_return_eligible %}
+            <form method="POST"
+                  action="{% url 'request_return' order.id %}"
+                  class="mt-2">
+              {% csrf_token %}
+              <button class="btn btn-warning btn-sm">
+                Request Return
+              </button>
+            </form>
+          {% elif order.status == "delivered" %}
+            <small class="text-muted d-block mt-2">
+              Return window closed
+            </small>
+          {% endif %}
+
+        </div>
+      {% endfor %}
+
+    </div>
+  {% else %}
+    <p class="text-muted">No orders found.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

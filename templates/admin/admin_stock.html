@@ -1,0 +1,74 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block admin_content %}
+<h3 class="mb-3">Product Stock</h3>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Stock Overview</h5>
+
+    <form method="get" class="d-flex align-items-center gap-2">
+      <label for="filter" class="mb-0 small text-muted">Filter:</label>
+      <select name="filter" id="filter" class="form-select form-select-sm" onchange="this.form.submit()">
+        <option value="all"  {% if current_filter == 'all' %}selected{% endif %}>All Stocks</option>
+        <option value="low"  {% if current_filter == 'low' %}selected{% endif %}>Low Stock (&lt; 15)</option>
+        <option value="high" {% if current_filter == 'high' %}selected{% endif %}>High Stock (≥ 15)</option>
+      </select>
+      <noscript>
+        <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+      </noscript>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>S.No</th>
+          <th>Product</th>
+          <th>Brand</th>
+          <th>Category</th>
+          <th>Current Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ p.product_name }}</td>
+          <td>{{ p.brand.brand_name }}</td>
+          <td>{{ p.category.category_name }}</td>
+          <td>
+            {% if p.product_inventory <= 0 %}
+              <span class="badge bg-danger">Out of stock ({{ p.product_inventory }})</span>
+            {% elif p.product_inventory < 15 %}
+              <span class="badge bg-warning text-dark">Low ({{ p.product_inventory }})</span>
+            {% else %}
+              <span class="badge bg-success">OK ({{ p.product_inventory }})</span>
+            {% endif %}
+          </td>
+
+          <td class="d-flex gap-1">
+            <a href="{% url 'admin_product_detail' p.id %}" class="btn btn-sm btn-outline-secondary">
+              View
+            </a>
+            <a href="{% url 'update_product' p.product_slug %}" class="btn btn-sm btn-outline-primary">
+              Edit
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center text-muted py-3">
+            No products found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

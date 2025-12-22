@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} All Categories | Clothify {% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #f6f7fb;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .category-card {
+        border-radius: 18px;
+        overflow: hidden;
+        transition: 0.3s ease-in-out;
+        background: #ffffff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .category-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+
+    .category-img {
+        height: 170px;
+        object-fit: cover;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .category-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 12px 0;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Browse Categories</h2>
+        <p class="text-muted">Find groceries, food items and daily essentials easily.</p>
+    </div>
+
+    <div class="row g-4">
+
+        {% for category in categories %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'products_list' %}?category={{ category.category_slug }}" class="text-decoration-none">
+                    <div class="card category-card">
+
+                        {% if category.category_image %}
+                            <img src="{{ category.category_image.url }}" class="category-img" alt="{{ category.category_name }}">
+                        {% else %}
+                            <img src="https://img.icons8.com/?size=100&id=recV2gHMBdVI&format=png&color=000000" class="category-img">
+                        {% endif %}
+
+                        <div class="category-title text-dark">
+                            {{ category.category_name }}
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No categories available.</p>
+            </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

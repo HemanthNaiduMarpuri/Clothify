@@ -1,0 +1,45 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block admin_content %}
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Update Category</h4>
+    <a href="{% url 'all_categories' %}" class="btn btn-outline-secondary btn-sm">← Back</a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label">Category Name</label>
+          {{ form.category_name }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Category Slug</label>
+          {{ form.category_slug }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Category Image</label>
+          {{ form.category_image }}
+
+          {% if category.category_image %}
+            <img src="{{ category.category_image.url }}" class="mt-2" height="100">
+          {% endif %}
+        </div>
+
+        <button class="btn btn-primary">Update Category</button>
+        <a href="{% url 'all_categories' %}" class="btn btn-outline-danger">Cancel</a>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

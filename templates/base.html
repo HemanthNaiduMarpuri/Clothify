@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Clothify{% endblock %}</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body { background: #f5f7ff; font-family: 'Segoe UI', sans-serif;  display: flex;
+        flex-direction: column; min-height: 100vh; }
+
+        #searchSuggestions {
+            position: absolute;
+            top: 45px;
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+            z-index: 999;
+            display: none;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        #searchSuggestions::-webkit-scrollbar { width: 0; }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        .suggestion-item:hover {
+            background: #f1f1ff;
+        }
+        .profile-circle {
+            width: 30px;          
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .footer{
+            margin-top: auto;
+        }
+        .social-icon {
+    color: white;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    }
+
+    .social-icon:hover {
+    transform: translateY(-3px);
+    }
+
+    .social-icon.facebook:hover {
+    color: #1877f2; 
+    }
+    .social-icon.instagram:hover {
+    color: rgb(233, 19, 19); 
+    }
+    .social-icon.linkedin:hover {
+    color: #1877f2; 
+    }
+    .social-icon.github:hover {
+    color: black; 
+    }
+    .social-icon.twitter:hover {
+    color: #1877f2; 
+    }
+
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
+    <div class="container align-items-center position-relative">
+
+        <a class="navbar-brand fw-bold me-4" href="{% url 'homepage' %}">
+            Clothify
+        </a>
+
+        <div class="position-relative flex-grow-1 me-3 d-none d-lg-block" style="max-width:480px;">
+            <input type="text" id="searchInput" class="form-control rounded-pill px-3"
+                   placeholder="Search for products…">
+            <div id="searchSuggestions"></div> 
+        </div>
+
+        <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMenu">
+
+            <div class="position-relative d-lg-none mt-3 mb-2">
+                <input type="text" id="searchInputMobile" class="form-control rounded-pill px-3"
+                       placeholder="Search for products…">
+                <div id="searchSuggestionsMobile"></div>
+            </div>
+
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                <li class="nav-item mx-2">
+                    <a class="nav-link" href="{% url 'products_list' %}">Products</a>
+                </li>
+
+                <li class="nav-item mx-2">
+                    <a class="nav-link" href="{% url 'discount_products_list' %}">Discounts</a>
+                </li>
+
+                <li class="nav-item mx-2">
+                    <a class="nav-link" href="{% url 'about_us' %}">About</a>
+                </li>
+
+                <li class="nav-item mx-2">
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                </li>
+
+                {% if request.user.is_authenticated %}
+
+                <li class="nav-item dropdown mx-2">
+                    <button class="btn btn-primary dropdown-toggle fw-semibold shadow-sm" type="button"
+                            id="userDropdown" data-bs-toggle="dropdown">
+                        
+                        {% if request.user.user_role == "customer" %}
+                            {% if request.user.customer_profile.image %}
+                                <img src="{{ request.user.customer_profile.image.url }}" class="img-fluid profile-circle">
+                            {% else %}
+                                <i class="bi bi-person-circle me-1"></i>
+                            {% endif %}                            
+                        {% else %}
+                            <i class="bi bi-person-circle me-1"></i>
+                        {% endif %}
+                        {{ request.user.username }}
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
+                        <li><a class="dropdown-item rounded" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+                        {% if requst.user.user_role != 'delivery boy' %}
+                        <li><a class="dropdown-item rounded" href="{% url 'cart_list' %}"><i class="fa-solid fa-cart-shopping me-2"></i>Cart</a></li>
+                        <li><a class="dropdown-item rounded" href="{% url 'orders_list' %}"><i class="bi bi-box-seam me-2"></i>Orders</a></li>
+                        <li><a class="dropdown-item rounded" href="{% url 'favorite_list' %}"><i class="fa-regular fa-bookmark me-2"></i>Bookmarks</a></li>
+                        {% endif %}
+                        <div class="dropdown-divider"></div> 
+                        {% if request.user.is_staff %} 
+                            <li><a class="dropdown-item rounded fw-bold" href="{% url 'admin_dashboard' %}"> 
+                                Admin Panel</a>
+                            </li> 
+                             
+                             <div class="dropdown-divider">
+
+                        </div> 
+                        {% endif %}
+
+                        <form method="post" action="{% url 'account_logout' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger btn-sm w-100">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
+                        </form>
+                    </ul>
+                </li>
+
+                {% else %}
+
+                <li class="nav-item mx-2">
+                    <a href="{% url 'account_login' %}" class="btn btn-primary btn-sm">Login</a>
+                </li>
+
+                {% endif %}
+
+            </ul>
+
+        </div>
+
+    </div>
+</nav>
+
+<div class="container mt-4">
+    {% block content %}{% endblock %}
+</div>
+
+<footer class="text-white mt-5" style="background-color:#0f172a;">
+  <div class="container py-5">
+
+    <div class="row text-center justify-content-center mb-4">
+
+      <div class="col-md-2">
+        <h6 class="text-uppercase fw-bold">
+          <a href="{% url 'homepage' %}" class="text-white text-decoration-none">
+            Home
+          </a>
+        </h6>
+      </div>
+
+      <div class="col-md-2">
+        <h6 class="text-uppercase fw-bold">
+          <a href="{% url 'all_products' %}" class="text-white text-decoration-none">
+            Products
+          </a>
+        </h6>
+      </div>
+
+      <div class="col-md-2">
+        <h6 class="text-uppercase fw-bold">
+          <a href="{% url 'about_us' %}" class="text-white text-decoration-none">
+            About Us
+          </a>
+        </h6>
+      </div>
+
+      <div class="col-md-2">
+        <h6 class="text-uppercase fw-bold">
+          <a href="{% url 'contact' %}" class="text-white text-decoration-none">
+            Contact
+          </a>
+        </h6>
+      </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-8 text-center">
+        <p class="text-white-50">
+          Clothify is your trusted online shopping platform for quality
+          products, quick delivery, and secure payments. We bring the best
+          deals straight to your doorstep.
+        </p>
+      </div>
+    </div>
+
+    <div class="text-center mb-4">
+      <a href="#" class="social-icon facebook me-4"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" class="social-icon twitter me-4"><i class="fab fa-twitter"></i></a>
+      <a href="#" class="social-icon instagram me-4"><i class="fab fa-instagram"></i></a>
+      <a href="#" class="social-icon linkedin me-4"><i class="fab fa-linkedin"></i></a>
+      <a href="#" class="social-icon github me-4"><i class="fab fa-github"></i></a>
+    </div>
+
+  </div>
+
+  <div class="text-center p-3" style="background-color: rgba(0,0,0,0.2);">
+    © {{ now|date:"Y" }} Clothify. All rights reserved.
+  </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block extra_js %}
+<script>
+function setupSearch(inputId, boxId) {
+    const input = document.getElementById(inputId);
+    const box = document.getElementById(boxId);
+
+    input.addEventListener("keyup", function () {
+        let q = this.value.trim();
+        if (q.length < 1) {
+            box.style.display = "none";
+            return;
+        }
+
+        fetch(`/search/?q=` + q)
+            .then(res => res.json())
+            .then(data => {
+                box.innerHTML = "";
+                if (data.length === 0) {
+                    box.style.display = "none";
+                    return;
+                }
+                data.forEach(item => {
+                    box.innerHTML += `
+                        <div class="suggestion-item" onclick="window.location='/products/product-detail/${item.slug}/'">
+                            <i class="bi bi-search me-2"></i> ${item.name}
+                        </div>
+                    `;
+                });
+                box.style.display = "block";
+            });
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!box.contains(e.target) && e.target !== input) {
+            box.style.display = "none";
+        }
+    });
+}
+
+setupSearch("searchInput", "searchSuggestions");
+setupSearch("searchInputMobile", "searchSuggestionsMobile");
+</script>
+<script>
+function togglePassword(inputId, icon) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    } else {
+        input.type = "password";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    }
+}
+</script>
+
+{% endblock %}
+
+</body>
+</html>

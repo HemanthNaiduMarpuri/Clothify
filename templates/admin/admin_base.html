@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .admin-dashboard {
+        background: #f5f7ff;
+        min-height: 100vh;
+    }
+    .top-bar {
+        border-bottom: 1px solid #dee2e6;
+    }
+    .sidebar {
+    background: #ffffff !important;
+    border-right: 1px solid #e1e1e1;
+    height: calc(100vh - 48px);  
+    overflow-y: auto;            
+    overflow-x: hidden;          
+  }
+    .sidebar-sticky {
+        position: sticky;
+        top: 0;
+    }
+    .sidebar .nav-link {
+        color: #333 !important;
+        font-size: 0.95rem;
+        padding: 8px 10px;
+        border-radius: 6px;
+        margin-bottom: 4px;
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+    .sidebar .nav-link:hover {
+        background: #f2f6ff;
+        color: #0d6efd !important;
+        text-decoration: none;
+    }
+    .sidebar .nav-link.active {
+        background: #0d6efd;
+        color: #ffffff !important;
+        font-weight: 500;
+    }
+    .sidebar-section-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 14px;
+        margin-bottom: 4px;
+        display: block;
+    }
+    .stat-card {
+        border-radius: 10px;
+        border: none;
+        background: #ffffff;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    .stat-card h6 {
+        color: #777;
+        margin-bottom: 6px;
+    }
+    .stat-card h3 {
+        font-weight: 600;
+    }
+    .card.shadow-sm {
+        border-radius: 10px;
+        border: none;
+    }
+    .card-header {
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7f0;
+    }
+    .table thead {
+        background: #f7f9ff;
+    }
+    .table th {
+        font-weight: 600;
+        color: #333;
+    }
+    .table td, .table th {
+        padding: 12px;
+        vertical-align: middle;
+    }
+    
+    .badge.bg-pending { background-color: #ffc107 !important; color: #000; }
+    .badge.bg-ongoing { background-color: #0dcaf0 !important; }
+    .badge.bg-delivered { background-color: #198754 !important; }
+    .badge.bg-cancelled { background-color: #dc3545 !important; }
+</style>
+
+<div class="container-fluid admin-dashboard">
+  <div class="row top-bar align-items-center py-2 px-3">
+    <div class="col-6">
+      <button class="btn btn-outline-secondary btn-sm" onclick="history.back()">
+        ← Back
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <nav class="col-md-2 col-lg-2 d-md-block sidebar bg-light p-0">
+      <div class="sidebar-sticky p-3">
+        <h5 class="mb-3">Menu</h5>
+        <ul class="nav flex-column">
+
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}"
+               href="{% url 'admin_dashboard' %}">
+                Dashboard
+            </a>
+          </li>
+
+          <li class="nav-item mt-2">
+            <span class="sidebar-section-title">Catalog</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'all_products' %}active{% endif %}"
+               href="{% url 'all_products' %}">
+                Products / Items
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'all_categories' %}active{% endif %}" href="{% url 'all_categories' %}">
+               Categories
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'all_brands' %}active{% endif %}" href="{% url 'all_brands' %}">
+               Brands
+            </a>
+          </li>
+
+          <li class="nav-item mt-2">
+            <span class="sidebar-section-title">
+              Inventory
+            </span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'product_inventory' %}active{% endif %}" href="{% url 'product_inventory' %}">
+               Stock & Inventory
+            </a>
+          </li>
+          <li class="nav-item mt-2">
+            <span class="sidebar-section-title">Orders</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'all_orders' %}active{% endif %}" href="{% url 'all_orders' %}">
+               All Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'pending_orders' %}active{% endif %}" href="{% url 'pending_orders' %}">
+               Pending Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'paid_orders' %}active{% endif %}" href="{% url 'paid_orders' %}">
+               Paid Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'ongoing_orders' %}active{% endif %}" href="{% url 'ongoing_orders' %}">
+              On-Going Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'delivered_orders' %}active{% endif %}" href="{% url 'delivered_orders' %}">
+            Delivered Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'return_request' %}active{% endif %}" href="{% url 'return_request_orders' %}">
+               Return Request Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'cancelled_orders' %}active{% endif %}" href="{% url 'cancelled_orders' %}">
+               Returned Orders
+            </a>
+          </li>
+
+          <li class="nav-item mt-2">
+            <span class="sidebar-section-title">Users</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'all_customers' %}active{% endif %}" href="{% url 'all_customers' %}">
+               Customers
+            </a>
+          </li>
+          <li class="nav-item mt-2">
+            <span class="sidebar-section-title">Analytics</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'payments' %}active{% endif %}" href="{% url 'payments' %}">
+               Payments & Transactions
+            </a>
+          </li>
+
+          <li class="nav-item mt-2">
+            <span class="sidebar-section-title">Supports</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'complaints' %}active{% endif %}" href="{% url 'complaints' %}">
+              Complaints
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4 py-3">
+      {% block admin_content %}{% endblock %}
+    </main>
+
+  </div>
+</div>
+
+{% endblock %}

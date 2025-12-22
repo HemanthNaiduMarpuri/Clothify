@@ -1,0 +1,18 @@
+{% extends "admin/admin_base.html" %}
+
+{% block admin_content %}
+<div class="container py-5 text-center">
+
+  <div class="card shadow-sm p-4">
+    <h4 class="mb-3">Delete Brand</h4>
+    <p>Are you sure you want to delete <strong>{{ brand.brand_name }}</strong>?</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <button class="btn btn-danger">Yes, Delete</button>
+      <a href="{% url 'all_brands' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

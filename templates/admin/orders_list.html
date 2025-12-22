@@ -1,0 +1,68 @@
+{% extends "admin/admin_base.html" %}
+
+{% block admin_content %}
+
+<div class="card shadow-sm">
+  <div class="card-header">
+    <h5 class="mb-0">{{ title }}</h5>
+  </div>
+
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0 align-middle">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Update</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.customer.user.username }}</td>
+          <td>₹{{ order.total_amount }}</td>
+
+          <td>
+            <span class="badge bg-black">
+              {{ order.get_status_display }}
+            </span>
+          </td>
+
+          <td>
+            <form method="post"
+                  action="{% url 'update_status' order.id %}"
+                  class="d-flex gap-2">
+              {% csrf_token %}
+              <select name="status"
+                      class="form-select form-select-sm w-auto">
+                {% for key, value in order.STATUS_CHOICES %}
+                  <option value="{{ key }}"
+                    {% if order.status == key %}selected{% endif %}>
+                    {{ value }}
+                  </option>
+                {% endfor %}
+              </select>
+              <button type="submit"
+                      class="btn btn-sm btn-outline-primary">
+                Update
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">
+            No orders found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

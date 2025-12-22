@@ -1,0 +1,68 @@
+/* Sidebar */
+.sidebar {
+    background: #ffffff;
+    border-right: 1px solid #e1e1e1;
+    min-height: 100vh;
+}
+
+.sidebar .nav-link {
+    color: #333 !important;
+    font-size: 15px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+.sidebar .nav-link:hover {
+    background: #f2f6ff;
+    color: #0d6efd !important;
+}
+
+.sidebar .nav-link.active {
+    background: #0d6efd;
+    color: white !important;
+    font-weight: 500;
+}
+
+/* Sidebar Section Title */
+.sidebar-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Cards */
+.stat-card {
+    border-radius: 10px;
+    border: none !important;
+    background: #ffffff;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card h6 {
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.stat-card h3 {
+    font-weight: 600;
+}
+
+/* Table */
+.table thead {
+    background: #f7f9ff;
+    font-weight: 600;
+}
+
+.table td, .table th {
+    padding: 12px;
+}
+
+/* Page Background */
+.admin-dashboard {
+    background: #f5f7ff;
+    min-height: 100vh;
+}

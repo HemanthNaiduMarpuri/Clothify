@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2>Product Details</h2>
+    <hr>
+
+    <div>
+        {% if product.product_image %}
+            <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}" width="200">
+        {% else %}
+            <img src="https://img.icons8.com/color/1200/image.jpg" width="200">
+        {% endif %}
+    </div>
+
+    <p><strong>Name:</strong> {{ product.product_name }}</p>
+    <p><strong>Brand:</strong> {{ product.brand.brand_name }}</p>
+    <p><strong>Category:</strong> {{ product.category.category_name }}</p>
+    <p><strong>Price:</strong> ₹{{ product.product_price }}</p>
+    <p><strong>Description:</strong> {{ product.product_description }}</p>
+
+    <hr>
+
+    <a href="{% url 'update_product' product.product_slug %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'delete_product' product.product_slug %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'all_products' %}" class="btn btn-secondary">Back</a>
+
+</div>
+{% endblock %}

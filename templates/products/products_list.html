@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Products – Clothify{% endblock %}
+
+{% block content %}
+
+<style>
+    .filter-box {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .product-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.2s ease-in-out;
+    }
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .product-image {
+        height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+</style>
+
+<div class="row">
+
+    <div class="col-md-3 mb-4">
+        <div class="mb-3">
+            <a href="javascript:history.back()" class="btn btn-light btn-sm shadow-sm rounded-pill px-3">
+                ← Back
+            </a>
+        </div>
+        <div class="filter-box">
+
+            <h5 class="fw-bold mb-3">Filters</h5>
+
+            <form method="GET">
+                <input type="text" name="q" value="{{ request.GET.q }}"
+                       class="form-control mb-3 rounded-pill"
+                       placeholder="Search products...">
+                
+                <label class="fw-semibold mt-3">Brands</label>
+                <select name="brand" class="form-select mb-3">
+                    <option value="">All Brands</option>
+
+                    {% for c in brands %}
+                        <option value="{{ c.brand_slug }}" {% if request.GET.brand == c.brand_slug|stringformat:"s" %}selected{% endif %}>
+                            {{ c.brand_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label class="fw-semibold mt-3">Category</label>
+                <select name="category" class="form-select mb-3">
+                    <option value="">All Categories</option>
+
+                    {% for c in categories %}
+                        <option value="{{ c.category_slug }}" {% if request.GET.category == c.category_slug|stringformat:"s" %}selected{% endif %}>
+                            {{ c.category_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label class="fw-semibold">Price Range</label>
+                <div class="row">
+                    <div class="col">
+                        <input type="number" name="min_price" class="form-control mb-3"
+                               placeholder="Min" value="{{ request.GET.min_price }}">
+                    </div>
+                    <div class="col">
+                        <input type="number" name="max_price" class="form-control mb-3"
+                               placeholder="Max" value="{{ request.GET.max_price }}">
+                    </div>
+                </div>
+
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox"
+                           name="discount" value="1"
+                           {% if request.GET.discount == "1" %}checked{% endif %}>
+                    <label class="form-check-label">Discounted Only</label>
+                </div>
+
+                <button class="btn btn-primary w-100 rounded-pill mt-3 fw-bold">Apply Filters</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-5">
+            <h4 class="fw-bold">Products</h4>
+            <span class="text-muted">{{ products.count }} items found</span>
+        </div>
+
+        <div class="row g-4">
+
+            {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'product_detail' product.product_slug %}" class="text-decoration-none text-dark">
+
+                    <div class="card product-card p-2 w-100 h-100">
+                        <img src="{{ product.product_image.url }}"
+                             class="product-image">
+
+                        <div class="p-2 text-center">
+                            <div class="fw-semibold">{{ product.product_name }}</div>
+
+                            {% if product.has_discounted %}
+                                <div>
+                                    <span class="text-danger fw-bold">₹{{ product.discounted_price }}</span>
+                                    <del class="text-muted ms-1">₹{{ product.original_price }}</del>
+                                </div>
+                            {% else %}
+                                <div class="text-muted">₹{{ product.product_price }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </a>
+            </div>
+            {% empty %}
+            <p>No products found.</p>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

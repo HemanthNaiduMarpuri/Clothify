@@ -1,0 +1,120 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block admin_content %}
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Update Product</h4>
+    <a href="{% url 'all_products' %}" class="btn btn-outline-secondary btn-sm">
+      ← Back
+    </a>
+  </div>
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label">Category</label>
+            {{ form.category }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Brand</label>
+            {{ form.brand }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Product Name</label>
+            {{ form.product_name }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Product Slug</label>
+            {{ form.product_slug }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            {{ form.product_description }}
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Price</label>
+            {{ form.product_price }}
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Original Price</label>
+            {{ form.original_price }}
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Discounted Price</label>
+            {{ form.discounted_price }}
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-check mt-4">
+              {{ form.has_discounted }}
+              <label class="form-check-label">
+                Has Discount
+              </label>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Inventory</label>
+            {{ form.product_inventory }}
+          </div>
+
+          <div class="col-md-8">
+            <label class="form-label">Product Image</label>
+            {{ form.product_image }}
+
+            {% if product.product_image %}
+              <div class="mt-2">
+                <img src="{{ product.product_image.url }}"
+                     style="height:120px;border-radius:10px;"
+                     alt="Product Image">
+              </div>
+            {% endif %}
+          </div>
+
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            Update Product
+          </button>
+          <a href="{% url 'all_products' %}" class="btn btn-outline-danger">
+            Cancel
+          </a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById('id_has_discounted');
+  const priceFields = ['id_original_price', 'id_discounted_price'];
+
+  function togglePrices() {
+    priceFields.forEach(id => {
+      document.getElementById(id).closest('.col-md-4').style.display =
+        toggle.checked ? 'block' : 'none';
+    });
+  }
+
+  toggle.addEventListener('change', togglePrices);
+  window.onload = togglePrices;
+</script>
+
+
+{% endblock %}

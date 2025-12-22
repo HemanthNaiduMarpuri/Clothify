@@ -1,0 +1,62 @@
+{% extends "admin/admin_base.html" %}
+
+{% block admin_content %}
+
+<div class="card shadow-sm">
+  <div class="card-header">
+    <h5 class="mb-0">Payments & Transactions</h5>
+  </div>
+
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0 align-middle">
+      <thead>
+        <tr>
+          <th>Transaction ID</th>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for order in payments %}
+        <tr>
+          <td>
+            {{ order.order.stripe_session_id|truncatechars:25 }}
+          </td>
+
+          <td>
+            {{ order.order.customer }} <br>
+            <small class="text-muted">
+              {{ order.customer.user.email }}
+            </small>
+          </td>
+
+          <td>
+            ₹{{ order.order.total_amount }}
+          </td>
+
+          <td>
+            {{ order.order.created_at|date:"d M Y, h:i A" }}
+          </td>
+
+          <td>
+            <span class="badge bg-success">
+              Paid
+            </span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">
+            No paid transactions found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #f5f6fb;
+    }
+
+    .favorites-wrapper {
+        margin-top: 30px;
+        margin-bottom: 40px;
+    }
+
+    .favorite-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .favorite-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+        border: 1px solid #eef0ff;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+        position: relative;
+    }
+    .favorite-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+    }
+
+    .favorite-img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 12px;
+        background: #f8f9ff;
+    }
+
+    .remove-btn {
+        border: none;
+        background: none;
+        color: #d9534f;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px 6px;
+    }
+
+    .remove-btn:hover {
+        color: #b52b27;
+    }
+
+    .empty-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .fade-out {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+</style>
+
+<div class="container favorites-wrapper">
+
+    <div class="favorite-header mb-4">
+        <h2 class="fw-bold mb-0">My Favorites</h2>
+        {% if favorites %}
+            <span class="text-muted small">
+                {{ favorites|length }} item{{ favorites|length|pluralize }}
+            </span>
+        {% endif %}
+    </div>
+
+    {% if favorites %}
+        <div class="row g-4" id="favorites-grid">
+            {% for fav in favorites %}
+                <div class="col-6 col-md-4 col-lg-3 favorite-col" data-fav-id="{{ fav.id }}">
+                    <div class="favorite-card">
+
+                        <a href="{% url 'product_detail' fav.product.product_slug %}" class="text-decoration-none text-dark">
+                            <img src="{{ fav.product.product_image.url }}" class="favorite-img" alt="{{ fav.product.product_name }}">
+
+                            <div class="fw-semibold mt-2" style="font-size: 15px;">
+                                {{ fav.product.product_name }}
+                            </div>
+
+                            <div class="text-success fw-bold mt-1">
+                                ₹{{ fav.product.discounted_price|default:fav.product.product_price }}
+                            </div>
+
+                            {% if fav.product.has_discounted %}
+                                <div class="text-muted small text-decoration-line-through">
+                                    ₹{{ fav.product.original_price }}
+                                </div>
+                            {% endif %}
+                        </a>
+
+                        <div class="mt-2 text-end">
+                            <button
+                                type="button"
+                                class="remove-btn favorite-remove-btn"
+                                title="Remove from favorites"
+                                data-url="{% url 'favorite' fav.product.id %}"
+                            >
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <div class="empty-box" id="empty-state">
+            <h4 class="fw-bold mb-3">No favorites yet</h4>
+            <p class="text-muted mb-4">You can start adding products to your favorites by tapping the favorite icon on any product.</p>
+            <a href="{% url 'products_list' %}" class="btn btn-primary px-4 py-2 rounded-pill">
+                Browse Products
+            </a>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{# SweetAlert2 (for nice toasts) #}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const csrftoken = getCookie("csrftoken");
+    const grid = document.getElementById("favorites-grid");
+
+    if (!grid) return;
+
+    grid.addEventListener("click", function (e) {
+        const btn = e.target.closest(".favorite-remove-btn");
+        if (!btn) return;
+
+        const url = btn.dataset.url;
+        const col = btn.closest(".favorite-col");
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken,
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json"
+            },
+        })
+        .then(response => {
+            if (response.status === 401) {
+                window.location.href = "{% url 'account_login' %}";
+                return null;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return;
+            if (!data.is_favorited && col) {
+                col.classList.add("fade-out");
+                setTimeout(() => {
+                    col.remove();
+
+                    if (document.querySelectorAll(".favorite-col").length === 0) {
+                        const container = document.querySelector(".favorites-wrapper");
+                        const emptyDiv = document.createElement("div");
+                        emptyDiv.className = "empty-box";
+                        emptyDiv.id = "empty-state";
+                        emptyDiv.innerHTML = `
+                            <h4 class="fw-bold mb-3">No favorites yet</h4>
+                            <p class="text-muted mb-4">
+                                You can start adding products to your favorites by tapping the favorite icon on any product.
+                            </p>
+                            <a href="{% url 'products_list' %}" class="btn btn-primary px-4 py-2 rounded-pill">
+                                Browse Products
+                            </a>
+                        `;
+                        container.appendChild(emptyDiv);
+                    }
+                }, 200);
+
+            }
+        })
+        .catch(err => {
+            console.error("Favorite remove error:", err);
+        });
+    });
+});
+</script>
+
+{% endblock %}

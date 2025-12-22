@@ -1,0 +1,655 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #f5f6fb;
+    }
+
+    .product-page-container {
+        margin-top: 24px;
+        margin-bottom: 40px;
+    }
+
+    .product-main-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+        border: 1px solid #eef0ff;
+    }
+
+    .product-image-wrapper {
+        background: linear-gradient(135deg, #f5f1ff, #e9f2ff);
+        border-radius: 16px;
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .product-image-wrapper img {
+        max-height: 340px;
+        object-fit: contain;
+    }
+
+    .product-meta-badges span {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #f3f4ff;
+        color: #4b5cff;
+        margin-right: 6px;
+    }
+
+    .price-line {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .price-line .current-price {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a8b3c;
+    }
+
+    .price-line .old-price {
+        font-size: 14px;
+    }
+
+    .section-title {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .info-badge {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #f8f9ff;
+        color: #6c757d;
+    }
+
+    .reviews-card,
+    .write-review-card,
+    .recommended-section-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        border: 1px solid #eef0ff;
+    }
+
+    .review-item {
+        padding: 12px 0;
+    }
+
+    .review-item + .review-item {
+        border-top: 1px solid #f0f1f6;
+    }
+
+    .reviewer-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #eef1ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 600;
+        color: #4b5cff;
+    }
+
+    .rating-stars {
+        color: #ffb400;
+        font-size: 14px;
+    }
+
+    .recommended-scroll {
+        display: flex;
+        gap: 15px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+    }
+
+    .recommended-scroll::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .recommended-scroll::-webkit-scrollbar-thumb {
+        background: #d0d4ff;
+        border-radius: 3px;
+    }
+
+    .recommended-card {
+        min-width: 160px;
+        max-width: 160px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 10px;
+        box-shadow: 0 2px 7px rgba(0,0,0,0.08);
+        flex-shrink: 0;
+        border: 1px solid #f0f1ff;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .recommended-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+
+    .recommended-img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 10px;
+        background: #f8f9ff;
+    }
+    .comment-reactions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    }
+
+    .comment-reactions form {
+    display: inline;
+    }
+
+    .reaction-btn {
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    }
+
+    .reaction-btn:hover {
+    background: #e9ecef;
+    }
+
+    .like-btn {
+    color: #0d6efd;
+    }
+
+    .dislike-btn {
+    color: #dc3545;
+    }
+
+    .reaction-btn span {
+    font-weight: 600;
+    }
+    .comment-delete-btn {
+    background: transparent;
+    border: none;
+    color: #dc3545;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    }
+
+    .comment-delete-btn:hover {
+    background-color: #dc3545;
+    color: #fff;
+    }
+
+    .comment-delete-btn i {
+    font-size: 15px;
+    }
+
+    .brand-story-section {
+    background-image: url("/static/images/static_image1.avif");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 420px;
+    position: relative;
+    margin-top: 80px;
+    }
+
+    .brand-overlay {
+    background: linear-gradient(
+        to right,
+        rgba(0,0,0,0.65),
+        rgba(0,0,0,0.25)
+    );
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    }
+
+    .brand-content {
+    max-width: 600px;
+    color: #ffffff;
+    }
+
+    .brand-title {
+    font-size: 38px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    }
+
+    .brand-text {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #e5e7eb;
+    margin-bottom: 25px;
+    }
+
+    .brand-content .btn {
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 600;
+    }
+
+
+</style>
+
+<div class="container product-page-container">
+
+    <div class="mb-5">
+        <a href="javascript:history.back()" class="btn btn-light btn-sm shadow-sm rounded-pill px-3">
+            ← Back
+        </a>
+    </div>
+
+    <div class="row product-main-card g-4">
+
+        <div class="col-md-5">
+            <div class="product-image-wrapper">
+                <img src="{{ product_detail.product_image.url }}"
+                     class="img-fluid"
+                     alt="{{ product_detail.product_name }}">
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h2 class="fw-bold mb-0">{{ product_detail.product_name }}</h2>
+                {% if product_detail.brand %}
+                    <span class="badge bg-light text-muted">
+                        {{ product_detail.brand }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="product-meta-badges mb-2">
+                {% if product_detail.category %}
+                    <span>{{ product_detail.category }}</span>
+                {% endif %}
+                {% if is_available_for_buy %}
+                    <span style="background:#e6f7ec; color:#1a8b3c;">In Stock</span>
+                {% else %}
+                    <span style="background:#ffecec; color:#c0392b;">Out of Stock</span>
+                {% endif %}
+            </div>
+
+            <div class="price-line">
+                <div class="current-price">
+                    ₹{{ product_detail.discounted_price|default:product_detail.product_price }}
+                </div>
+
+                {% if product_detail.has_discounted %}
+                    <div class="old-price text-muted text-decoration-line-through">
+                        ₹{{ product_detail.original_price }}
+                    </div>
+                    <span class="badge bg-danger rounded-pill">
+                        {{ discount_percent }}% OFF
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="section-title mb-0">Description</span>
+                    <span class="info-badge">Product details</span>
+                </div>
+                <p class="mb-0 text-muted" style="line-height: 1.6;">
+                    {{ product_detail.product_description }}
+                </p>
+            </div>
+
+            <div class="mt-4 d-flex flex-wrap gap-2">
+                {% if is_available_for_buy %}
+                    {% if user.is_authenticated %}
+                        {% if quantity_in_cart > 0 %}
+                            <div class="d-flex align-items-center gap-2">
+
+                                <form method="post" action="{% url 'cart' product_detail.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="decrease">
+                                    <button type="submit" class="btn btn-outline-success rounded-pill px-3">
+                                        <i class="bi bi-dash-lg"></i>
+                                    </button>
+                                </form>
+
+                                <span class="px-3 py-2 rounded-pill bg-light border small">
+                                    {{ quantity_in_cart }} in cart
+                                </span>
+
+                                <form method="post" action="{% url 'cart' product_detail.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="increase">
+                                    <button type="submit" class="btn btn-success rounded-pill px-3">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                </form>
+
+                            </div>
+                        {% else %}
+                            <form method="post" action="{% url 'cart' product_detail.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'account_login' %}" class="btn btn-success px-4 py-2 rounded-pill">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Login to buy
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <button class="btn btn-secondary px-4 py-2 rounded-pill" disabled>
+                        Out of Stock
+                    </button>
+                {% endif %}
+
+                <button
+                    type="button"
+                    class="btn btn-outline-danger rounded-pill px-3 d-flex align-items-center gap-2 favorite-toggle-btn"
+                    data-url="{% url 'favorite' product_detail.id %}"
+                >
+                    <span class="favorite-icon">
+                        {% if is_favorited %}
+                            <i class="bi bi-heart-fill"></i>
+                        {% else %}
+                            <i class="bi bi-heart"></i>
+                        {% endif %}
+                    </span>
+                    <span class="favorite-count small">
+                        {{ favorite_count }} favorite{{ favorite_count|pluralize }}
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <section class="my-5">
+  <div class="container">
+    <div class="p-4 text-center rounded-4 shadow-sm"
+         style="background: linear-gradient(90deg,#4f46e5,#9333ea); color:white;">
+      <h4 class="fw-bold mb-2">Special Offer Just for You 🎉</h4>
+      <p class="mb-2">
+        Buy now and get exclusive benefits on your order.
+      </p>
+      <a href="{% url 'products_list' %}" class="btn btn-light btn-sm">
+        Shop Now
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<div class="row mt-4 g-4">
+  <div class="col-md-10 mx-auto">
+
+    {% if comments %}
+      <div class="reviews-card mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="fw-semibold mb-0">Customer Reviews</h4>
+          <span class="small text-muted">
+            {{ comments|length }} review{{ comments|length|pluralize }}
+          </span>
+        </div>
+
+        {% for comment in comments %}
+          <div class="review-item d-flex gap-3 border-bottom pb-3 mb-3">
+            <div class="reviewer-avatar">
+                {% if comment.customer.image %}
+                    <img src="{{ comment.customer.image.url }}"
+                        alt="{{ comment.customer }}"
+                        class="img-fluid rounded-circle"
+                        style="width:45px;height:35px;object-fit:cover;">
+                {% else %}
+                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                        style="width:45px;height:35px;">
+                    {{ comment.customer }}
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="fw-semibold">
+                  {{ comment.customer }}
+                </div>
+                <div class="small text-muted">
+                  {{ comment.created_at|date:"M d, Y" }}
+                </div>
+              </div>
+
+              <p class="mt-2 mb-2 text-muted" style="font-size: 14px;">
+                {{ comment.comment }}
+              </p>
+
+               <div class="comment-reactions">
+                <form method="post" action="{% url 'comment_like' comment.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="reaction-btn like-btn">
+                    👍 <span>{{ comment.likes.count }}</span> Like
+                    </button>
+                </form>
+
+                <form method="post" action="{% url 'comment_dislike' comment.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="reaction-btn dislike-btn">
+                    👎 <span>{{ comment.dislikes.count }}</span> Dislike
+                    </button>
+                </form>
+                </div>
+                <div class="d-flex justify-content-end">
+                {% if comment.customer.user == request.user %}
+                    <form method="post" action="{% url 'delete_comment' comment.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="comment-delete-btn">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                    </form>
+                {% endif %}
+                </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if has_purchased %}
+    <div class="write-review-card">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="fw-semibold mb-0">Write a Review</h4>
+        <span class="small text-muted">
+          Share your experience with this product
+        </span>
+      </div>
+
+      <form method="post" action="{% url 'comment' product_detail.id %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          {{ comment_form.comment }}
+        </div>
+
+        <input type="hidden" name="reaction" id="reaction-input">
+
+        <div class="d-flex gap-2 mb-3">
+          <button type="button"
+                  class="btn btn-outline-success btn-sm"
+                  onclick="setReaction('like')">
+            👍 Like
+          </button>
+
+          <button type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  onclick="setReaction('dislike')">
+            👎 Dislike
+          </button>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary px-4 rounded-pill">
+            Submit Review
+          </button>
+        </div>
+      </form>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+
+
+    {% if recommended_products %}
+        <div class="mt-5 recommended-section-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h4 class="fw-bold mb-0">Recommended for you</h4>
+                <span class="small text-muted">
+                    Based on similar items
+                </span>
+            </div>
+
+            <div class="recommended-scroll mt-3">
+                {% for product in recommended_products %}
+                    <a href="{% url 'product_detail' product.product_slug %}"
+                       class="text-decoration-none text-dark">
+                        <div class="recommended-card">
+                            <img src="{{ product.product_image.url }}" class="recommended-img" alt="{{ product.product_name }}">
+                            <div class="fw-semibold mt-2" style="font-size: 14px;">
+                                {{ product.product_name }}
+                            </div>
+                            <div class="text-success fw-bold mt-1" style="font-size: 13px;">
+                                ₹{{ product.discounted_price|default:product.product_price }}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
+</div>
+
+<section class="brand-story-section">
+  <div class="brand-overlay">
+    <div class="container">
+      <div class="brand-content">
+
+        <h2 class="brand-title">
+          Quality That Speaks for Itself
+        </h2>
+
+        <p class="brand-text">
+          Every product on clothify is carefully selected,
+          quality-checked, and delivered with trust.
+          We believe shopping should be simple, reliable,
+          and satisfying.
+        </p>
+
+        <a href="{% url 'all_products' %}" class="btn btn-light btn-lg">
+          Explore More Products
+        </a>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.querySelector(".favorite-toggle-btn");
+    if (!btn) return;
+
+    const csrftoken = getCookie("csrftoken");
+
+    btn.addEventListener("click", function () {
+        const url = this.dataset.url;
+        const iconSpan = this.querySelector(".favorite-icon");
+        const countSpan = this.querySelector(".favorite-count");
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken,
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json"
+            },
+        })
+        .then(response => {
+            if (response.status === 401) {
+                window.location.href = "{% url 'account_login' %}";
+                return null;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return;
+
+            if (data.is_favorited) {
+                iconSpan.innerHTML = '<i class="bi bi-heart-fill"></i>';
+            } else {
+                iconSpan.innerHTML = '<i class="bi bi-heart"></i>';
+            }
+
+            const text =
+                data.favorite_count +
+                (data.favorite_count === 1 ? " favorite" : " favorites");
+            countSpan.textContent = text;
+        })
+        .catch(err => {
+            console.error("Favorite toggle error:", err);
+        });
+    });
+});
+
+function setReaction(value) {
+    document.getElementById("reaction-input").value = value;
+  }
+
+</script>
+
+
+
+{% endblock %}

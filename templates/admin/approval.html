@@ -1,0 +1,66 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block admin_content %}
+<h3 class="mb-3">Delivery Partner Approvals</h3>
+
+<div class="card shadow-sm">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Pending Delivery Boys</h5>
+    <span class="small text-muted">All partners awaiting approval</span>
+  </div>
+
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>S.No</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Joined At</th>
+          <th>ID Proof</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for boy in approval %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+
+          <td>{{ boy.name }}</td>
+          <td>{{ boy.phone }}</td>
+
+          <td>{{ boy.created_at|date:"d M Y" }}</td>
+
+          <td>
+
+            <a href="#" class="btn btn-sm btn-outline-secondary">
+              View ID Proof
+            </a>
+          </td>
+
+          <td class="d-flex gap-2">
+            <button class="btn btn-sm btn-success">
+              Approve
+            </button>
+
+            <button class="btn btn-sm btn-outline-danger">
+              Reject
+            </button>
+          </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center text-muted py-3">
+            No delivery partners pending approval.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 text-center">
+    {% if order %}
+        <h2 class="mb-3">Payment Successful</h2>
+        <p>Your order #{{ order.id }} has been placed successfully.</p>
+        <p>Total: ₹{{ order.total_amount }}</p>
+        <a href="{% url 'orders_list' %}" class="btn btn-primary mt-3">View My Orders</a>
+    {% else %}
+        <h2>Payment Successful</h2>
+        <p>We couldn't match this payment to an order, but the payment went through.</p>
+    {% endif %}
+</div>
+{% endblock %}

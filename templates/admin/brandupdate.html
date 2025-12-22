@@ -1,0 +1,45 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block admin_content %}
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Update Brand</h4>
+    <a href="{% url 'all_brands' %}" class="btn btn-outline-secondary btn-sm">← Back</a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label">Brand Name</label>
+          {{ form.brand_name }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Brand Slug</label>
+          {{ form.brand_slug }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Brand Image</label>
+          {{ form.brand_image }}
+
+          {% if brand.brand_image %}
+            <img src="{{ brand.brand_image.url }}" class="mt-2" height="100">
+          {% endif %}
+        </div>
+
+        <button class="btn btn-primary">Update Brand</button>
+        <a href="{% url 'all_brands' %}" class="btn btn-outline-danger">Cancel</a>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

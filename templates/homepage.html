@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% load static %}
+{% load cart_tags %}
+
+{% block title %}Home – Clothify{% endblock %}
+{% block content %}
+
+<style>
+.scroll-container {
+  position: relative;
+}
+
+.scroll-row {
+  overflow-x: auto;
+  display: flex;
+  gap: 20px;
+  padding: 0 50px;
+  scrollbar-width: none;
+}
+
+.scroll-row::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-btn {
+  position: absolute;
+  top: 40%;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  display: none; 
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.scroll-left { left: 0; }
+.scroll-right { right: 0; }
+
+.product-img-link {
+  display: block;
+  width: 100%;
+}
+
+.product-img-wrapper {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #111;
+}
+
+.product-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+</style>
+
+<script>
+function scrollLeft(id) {
+  document.getElementById(id).scrollBy({ left: -300, behavior: 'smooth' });
+}
+
+function scrollRight(id) {
+  document.getElementById(id).scrollBy({ left: 300, behavior: 'smooth' });
+}
+
+function toggleScrollButtons() {
+  document.querySelectorAll('.scroll-row').forEach(row => {
+    const container = row.closest('.scroll-container');
+    const leftBtn = container.querySelector('.scroll-left');
+    const rightBtn = container.querySelector('.scroll-right');
+
+    if (row.scrollWidth > row.clientWidth) {
+      leftBtn.style.display = 'flex';
+      rightBtn.style.display = 'flex';
+    } else {
+      leftBtn.style.display = 'none';
+      rightBtn.style.display = 'none';
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', toggleScrollButtons);
+window.addEventListener('resize', toggleScrollButtons);
+
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('scroll-left')) {
+    scrollLeft(e.target.dataset.target);
+  }
+  if (e.target.classList.contains('scroll-right')) {
+    scrollRight(e.target.dataset.target);
+  }
+});
+</script>
+
+<div class="row align-items-center mb-5"
+     style="background:#0f172a;border-radius:24px;color:white;">
+  <div class="col-md-6 p-5">
+    <span class="badge bg-warning text-dark">Trending Styles</span>
+    <h1 class="fw-bold mt-3" style="font-size:3rem;">
+      Fashion That Fits,<br>Delivered Fast
+    </h1>
+    <p class="fs-5 text-light">
+      Discover the latest clothing, accessories & seasonal trends—delivered right to your doorstep.
+    </p>
+    <a href="{% url 'products_list' %}"
+       class="btn btn-success btn-lg rounded-pill px-4 fw-bold">
+      Shop Collection
+    </a>
+  </div>
+</div>
+
+<div class="text-center p-5 mb-4"
+     style="background:linear-gradient(135deg,#6a5af9,#8265fa); border-radius:20px;color:white;"> 
+  <h1 class="fw-bold">Style Delivered to Your Door</h1> 
+  <p class="fs-5">Men • Women • Kids • Accessories</p> 
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="fw-bold">Top Brands</h3>
+  <a href="{% url 'brand_list' %}" class="text-decoration-none">View All →</a>
+</div>
+
+<div class="scroll-container">
+  <div class="scroll-btn scroll-left" data-target="brand-scroll">‹</div>
+  <div class="scroll-btn scroll-right" data-target="brand-scroll">›</div>
+
+  <div id="brand-scroll" class="scroll-row">
+    {% for brand in brands %}
+    <a href="{% url 'products_list' %}?brand={{ brand.brand_slug }}"
+       class="text-decoration-none text-dark">
+      <div class="card border-0 shadow-sm" style="width:160px">
+        <img src="{{ brand.brand_image.url|default:'https://www.smeaz.org.zw/media/com_weimatchmaking/images/no-image.png' }}"
+             style="height:120px;object-fit:cover;border-radius:10px">
+        <div class="text-center fw-semibold mt-2">{{ brand.brand_name }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+  <h3 class="fw-bold">Top Categories</h3>
+  <a href="{% url 'categories_list' %}" class="text-decoration-none">View All →</a>
+</div>
+
+<div class="scroll-container">
+  <div class="scroll-btn scroll-left" data-target="cat-scroll">‹</div>
+  <div class="scroll-btn scroll-right" data-target="cat-scroll">›</div>
+
+  <div id="cat-scroll" class="scroll-row">
+    {% for category in categories %}
+    <a href="{% url 'products_list' %}?category={{ category.category_slug }}"
+       class="text-decoration-none text-dark">
+      <div class="card border-0 shadow-sm" style="width:160px">
+        <img src="{{ category.category_image.url|default:'https://www.smeaz.org.zw/media/com_weimatchmaking/images/no-image.png' }}"
+             style="height:120px;object-fit:cover;border-radius:10px">
+        <div class="text-center fw-semibold mt-2">{{ category.category_name }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="fw-bold">Recentely Added</h3>
+  <a href="{% url 'products_list' %}" class="text-decoration-none">View All →</a>
+</div>
+
+<div class="scroll-container">
+  <div class="scroll-btn scroll-left" data-target="recent-scroll">‹</div>
+  <div class="scroll-btn scroll-right" data-target="recent-scroll">›</div>
+
+  <div id="recent-scroll" class="scroll-row mt-3">
+    {% for product in recently_added_products %}
+    <div style="width:180px">
+      <div class="card border-0 shadow-sm h-100">
+
+        <a href="{% url 'product_detail' product.product_slug %}" class="product-img-link">
+          <div class="product-img-wrapper">
+            <img src="{{ product.product_image.url|default:'https://www.smeaz.org.zw/media/com_weimatchmaking/images/no-image.png' }}">
+          </div>
+        </a>
+
+        <div class="card-body text-center">
+          <div class="fw-bold">{{ product.product_name }}</div>
+          <div class="text-muted">₹{{ product.product_price }}</div>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="fw-bold">Discounted Products</h3>
+  <a href="{% url 'discount_products_list' %}" class="text-decoration-none">View All →</a>
+</div>
+
+<div class="scroll-container">
+  <div class="scroll-btn scroll-left" data-target="discount-scroll">‹</div>
+  <div class="scroll-btn scroll-right" data-target="discount-scroll">›</div>
+
+  <div id="discount-scroll" class="scroll-row mt-3">
+    {% for product in discounted_products %}
+    <div style="width:180px">
+      <div class="card border-0 shadow-sm h-100">
+
+        <a href="{% url 'product_detail' product.product_slug %}" class="product-img-link">
+          <div class="product-img-wrapper">
+            <img src="{{ product.product_image.url|default:'https://www.smeaz.org.zw/media/com_weimatchmaking/images/no-image.png' }}">
+          </div>
+        </a>
+
+        <div class="card-body text-center">
+          <div class="fw-bold">{{ product.product_name }}</div>
+          <span class="text-danger fw-bold">₹{{ product.discounted_price }}</span>
+          <del class="text-muted ms-1">₹{{ product.original_price }}</del>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+{% load static %}
+
+{% block title %}Login – FastDel{% endblock %}
+
+{% block content %}
+
+<style>
+.auth-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.glass-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 28px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.25);
+}
+
+.glass-card input {
+    width: 100%;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    border-radius: 10px;
+    padding: 0 40px 0 12px;
+}
+
+.glass-card input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.6);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    color: #f1f1f1;
+    margin: 16px 0;
+}
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+}
+.divider span {
+    margin: 0 10px;
+    font-size: 14px;
+}
+
+.btn-google {
+    background: #ea4335;
+    color: #fff;
+    border-radius: 10px;
+}
+.btn-google:hover {
+    background: #d73b2e;
+    color: #fff;
+}
+.btn-primary {
+    border-radius: 10px;
+}
+
+.password-wrapper {
+    position: relative;
+}
+.password-wrapper i {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #333;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+.back-btn:hover {
+    text-decoration: underline;
+}
+</style>
+
+<div class="auth-bg">
+
+    <div class="glass-card text-white">
+        <div class="mb-3">
+            <a href="/" class="back-btn">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <h3 class="fw-bold text-center mb-3">
+            Welcome Back 
+        </h3>
+
+        <a href="{% provider_login_url 'google' %}"
+           class="btn btn-google w-100 mb-3">
+            <i class="bi bi-google me-1"></i> Continue with Google
+        </a>
+
+        <div class="divider">
+            <span>or</span>
+        </div>
+
+        <form method="post" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="mb-3">
+                {{ form.login.label_tag }}
+                {{ form.login }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.password.label_tag }}
+                <div class="password-wrapper">
+                    {{ form.password }}
+                    <i class="bi bi-eye-slash"
+                       onclick="togglePassword('id_password', this)">
+                    </i>
+                </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-2">
+                Login
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{% url 'account_reset_password' %}" class="text-white fw-semibold">
+                Forgot password?
+            </a>
+        </div>
+
+        <hr class="text-white">
+
+        <div class="text-center">
+            Don’t have an account?
+            <a href="{% url 'account_signup' %}" class="text-white fw-semibold">
+                Sign up
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
