@@ -35,7 +35,7 @@ STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
 SECRET_KEY = 'django-insecure-&0s(-5_1ebb-6o*v(pjpgc@xd5&r5&-35nqv*ki716gs6n(b3e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -90,6 +90,11 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 ROOT_URLCONF = 'delivery.urls'
+
+MIDDLEWARE.insert(
+    1,
+    'whitenoise.middleware.WhiteNoiseMiddleware'
+)
 
 TEMPLATES = [
     {
@@ -163,6 +168,11 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = 'static/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
