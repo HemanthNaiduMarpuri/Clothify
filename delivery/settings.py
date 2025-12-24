@@ -230,3 +230,9 @@ if os.environ.get("RENDER") == "true":
     except Exception:
         pass
 
+if os.environ.get("RENDER") == "true":
+    try:
+        from django.core.management import call_command
+        call_command("migrate", interactive=False)
+    except Exception:
+        pass
