@@ -121,13 +121,22 @@ WSGI_APPLICATION = 'delivery.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
     }
 }
 
-
-SOCIALACCOUNT_PROVIDERS = {}
+#DATABASES = {
+ #   'default': dj_database_url.config(
+  #      default=os.environ.get('DATABASE_URL'),
+   #     conn_max_age=600,
+    #    ssl_require=True,
+    #)
+#}
 
 
 # Password validation
@@ -204,6 +213,9 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
+# TEMPORARY: Auto-create superuser for Render Free tier
+import os
+
 if os.environ.get("RENDER") == "true":
     try:
         from django.contrib.auth import get_user_model
@@ -217,3 +229,4 @@ if os.environ.get("RENDER") == "true":
             )
     except Exception:
         pass
+

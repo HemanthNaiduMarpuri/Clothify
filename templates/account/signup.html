@@ -110,10 +110,13 @@
             Create Your Account
         </h3>
 
-        <a href="{% provider_login_url 'google' %}"
-           class="btn btn-google w-100 mb-3">
-            <i class="bi bi-google me-1"></i> Sign up with Google
-        </a>
+        {% get_providers as social_providers %}
+        {% if social_providers %}
+            <a href="{% provider_login_url 'google' %}" class="btn btn-google w-100 mb-3">
+                <i class="bi bi-google"></i> Sign up with Google
+            </a>
+        {% endif %}
+
 
         <div class="divider">
             <span>or</span>
