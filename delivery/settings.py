@@ -212,27 +212,3 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-
-# TEMPORARY: Auto-create superuser for Render Free tier
-import os
-
-if os.environ.get("RENDER") == "true":
-    try:
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
-
-        if not User.objects.filter(is_superuser=True).exists():
-            User.objects.create_superuser(
-                username="admin",
-                email="admin@clothify.com",
-                password="Admin@123"
-            )
-    except Exception:
-        pass
-
-if os.environ.get("RENDER") == "true":
-    try:
-        from django.core.management import call_command
-        call_command("migrate", interactive=False)
-    except Exception:
-        pass
