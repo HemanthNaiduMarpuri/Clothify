@@ -17,7 +17,6 @@ from .utils import get_total_amount
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-@login_required(login_url='account_login')
 class FavoriteView(View):
     def post(self, request, pk):
         if not request.user.is_authenticated:
@@ -55,7 +54,7 @@ class FavoriteListView(generic.ListView):
         customer = Customer.objects.get(user=self.request.user)
         return Favoriates.objects.filter(customer=customer).select_related('product')
     
-@login_required(login_url='account_login')
+
 class CartView(View):
     def post(self,request,pk):
         if not request.user.is_authenticated:

@@ -6,7 +6,7 @@ from accounts.models import Customer
 from orders.models import Cart
 from django.contrib import messages
 from complaints.models import Subscription
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 class HomepageView(generic.TemplateView):
     template_name = 'homepage.html'
@@ -80,3 +80,6 @@ class CategoryListView(generic.ListView):
 
     def get_queryset(self):
         return Category.objects.all()
+    
+def custom_403_view(request):
+    return render(request, '403.html')
