@@ -14,8 +14,10 @@ from django.utils import timezone
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 from django.utils.timezone import now
 from complaints.models import Complaints
+from .decorators import admin_required_decorator
 
-class DashboardView(generic.TemplateView):
+
+class DashboardView(AdminRequiredMixin, generic.TemplateView):
     template_name = 'admin/admin_dashboard.html'
     today = timezone.localdate()
 
@@ -32,7 +34,7 @@ class DashboardView(generic.TemplateView):
         context['recent_orders'] = Order.objects.all().order_by('-created_at')[:10]
         return context
 
-class AllProductsView(generic.ListView):
+class AllProductsView(AdminRequiredMixin, generic.ListView):
     model = Product
     template_name = 'admin/all_products.html'
     context_object_name = 'product'
@@ -59,7 +61,7 @@ class AllProductsView(generic.ListView):
         return context
     
 
-class ProductDetailView(generic.DetailView):
+class ProductDetailView(AdminRequiredMixin, generic.DetailView):
     model = Product
     template_name = 'admin/admin_product_detail.html'
     context_object_name = 'product'
@@ -69,7 +71,7 @@ class ProductDetailView(generic.DetailView):
         queryset = self.model.objects.filter(id=pk)
         return queryset
 
-class AllCategoriesView(generic.ListView):
+class AllCategoriesView(AdminRequiredMixin, generic.ListView):
     model = Category
     template_name = 'admin/admin_categories.html'
     context_object_name = 'category'
@@ -90,7 +92,7 @@ class AllCategoriesView(generic.ListView):
         return context
 
 
-class AllBrandsView(generic.ListView):
+class AllBrandsView(AdminRequiredMixin, generic.ListView):
     model = Brand
     template_name = 'admin/admin_brands.html'
     context_object_name = 'brand'
@@ -110,7 +112,7 @@ class AllBrandsView(generic.ListView):
         context['search_query'] = self.request.GET.get('q', '').strip()
         return context
 
-class AllCustomersView(generic.ListView):
+class AllCustomersView(AdminRequiredMixin, generic.ListView):
     model = Customer
     template_name = 'admin/admin_customer.html'
     context_object_name = 'customers'
@@ -132,7 +134,7 @@ class AllCustomersView(generic.ListView):
         context['current_sort'] = self.request.GET.get('sort', 'latest').strip()
         return context
     
-class AllDeliveryBoyView(generic.ListView):
+class AllDeliveryBoyView(AdminRequiredMixin, generic.ListView):
     model = DeliveryBoy
     template_name = 'admin/admin_deliveryboy.html'
     context_object_name = 'deliveryboy'
@@ -154,7 +156,7 @@ class AllDeliveryBoyView(generic.ListView):
         context['current_sort'] = self.request.GET.get('sort', 'latest')
         return context
 
-class ProductStockView(generic.ListView):
+class ProductStockView(AdminRequiredMixin, generic.ListView):
     model = Product
     template_name = 'admin/admin_stock.html'    
     context_object_name = 'products'
@@ -175,7 +177,7 @@ class ProductStockView(generic.ListView):
         context['current_filter'] = self.request.GET.get('filter', 'all')
         return context
 
-class ApprovalView(generic.ListView):
+class ApprovalView(AdminRequiredMixin, generic.ListView):
     model = DeliveryBoy
     template_name = 'admin/approval.html'
     context_object_name = 'approval'
@@ -183,14 +185,14 @@ class ApprovalView(generic.ListView):
     def get_queryset(self):
         return self.model.objects.filter(status = 'inactive')
     
-class AllOrdersView(generic.ListView):
+class AllOrdersView(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/all_orders.html'
     context_object_name = 'orders'
     ordering = ['-created_at']
 
 @require_POST
-@login_required
+@admin_required_decorator
 def update_order_status(request, id):
     order = get_object_or_404(Order, id=id)
     status = request.POST.get('status')
@@ -203,7 +205,7 @@ def update_order_status(request, id):
 
     return redirect('all_orders')
 
-class PendingOrdersList(generic.ListView):
+class PendingOrdersList(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/orders_list.html'
     context_object_name = 'orders'
@@ -216,7 +218,7 @@ class PendingOrdersList(generic.ListView):
         context['title'] = 'Pending Orders'
         return context
     
-class PaidOrdersList(generic.ListView):
+class PaidOrdersList(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/orders_list.html'
     context_object_name = 'orders'
@@ -229,7 +231,7 @@ class PaidOrdersList(generic.ListView):
         context['title'] = 'Paid Orders'
         return context
 
-class OngoingOrdersList(generic.ListView):
+class OngoingOrdersList(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/orders_list.html'
     context_object_name = 'orders'
@@ -242,7 +244,7 @@ class OngoingOrdersList(generic.ListView):
         context['title'] = 'Ongoing Orders'
         return context
 
-class DeliveredOrdersList(generic.ListView):
+class DeliveredOrdersList(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/orders_list.html'
     context_object_name = 'orders'
@@ -255,7 +257,7 @@ class DeliveredOrdersList(generic.ListView):
         context['title'] = 'Delivered Orders'
         return context
     
-class RequestReturnedOrdersList(generic.ListView):
+class RequestReturnedOrdersList(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/orders_list.html'
     context_object_name = 'orders'
@@ -268,7 +270,7 @@ class RequestReturnedOrdersList(generic.ListView):
         context['title'] = 'Return Requested Orders'
         return context
 
-class CancelledOrdersList(generic.ListView):
+class CancelledOrdersList(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/orders_list.html'
     context_object_name = 'orders'
@@ -281,7 +283,7 @@ class CancelledOrdersList(generic.ListView):
         context['title'] = 'Cancelled Orders'
         return context
 
-class PaymentsView(generic.ListView):
+class PaymentsView(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/payments.html'
     context_object_name = 'payments'
@@ -290,7 +292,7 @@ class PaymentsView(generic.ListView):
     def get_queryset(self):
         return OrderItem.objects.filter(status='paid')
     
-@login_required    
+@admin_required_decorator   
 def create_product(request):
     if request.method == 'POST':
         form = ProductCreateForm(request.POST, request.FILES)
@@ -307,7 +309,7 @@ def create_product(request):
 
     return render(request, 'admin/product_create.html', context=context)
 
-class UpdateProductView(generic.UpdateView):
+class UpdateProductView(AdminRequiredMixin, generic.UpdateView):
     model = Product
     form_class = ProductCreateForm
     template_name = 'admin/productupdate.html'
@@ -319,7 +321,7 @@ class UpdateProductView(generic.UpdateView):
     def get_success_url(self):
         return reverse_lazy('all_products')
 
-class BrandCreateView(generic.CreateView):
+class BrandCreateView(AdminRequiredMixin, generic.CreateView):
     model = Brand
     form_class = BrandForm
     template_name = 'admin/brandcreate.html'
@@ -328,7 +330,7 @@ class BrandCreateView(generic.CreateView):
     def get_success_url(self):
         return reverse_lazy('all_brands')
 
-class BrandUpdateView(generic.UpdateView):
+class BrandUpdateView(AdminRequiredMixin, generic.UpdateView):
     model = Brand
     form_class = BrandForm
     template_name = 'admin/brandupdate.html'
@@ -340,7 +342,7 @@ class BrandUpdateView(generic.UpdateView):
     def get_success_url(self):
         return reverse_lazy('all_brands')
 
-class CategoryCreateView(generic.CreateView):
+class CategoryCreateView(AdminRequiredMixin, generic.CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'admin/categorycreate.html'
@@ -349,7 +351,7 @@ class CategoryCreateView(generic.CreateView):
     def get_success_url(self):
         return reverse_lazy('all_categories')
 
-class CategoryUpdateView(generic.UpdateView):
+class CategoryUpdateView(AdminRequiredMixin, generic.UpdateView):
     model = Category
     form_class = CategoryForm
     template_name = 'admin/categoryupdate.html'
@@ -361,7 +363,7 @@ class CategoryUpdateView(generic.UpdateView):
     def get_success_url(self):
         return reverse_lazy('all_categories')
  
-class ProductDeleteView(generic.DeleteView):
+class ProductDeleteView(AdminRequiredMixin, generic.DeleteView):
     model = Product
     template_name = 'admin/productdelete.html'
     context_object_name = 'product'
@@ -372,7 +374,7 @@ class ProductDeleteView(generic.DeleteView):
     def get_success_url(self):
         return reverse_lazy('all_products')
 
-class CategoryDeleteView(generic.DeleteView):
+class CategoryDeleteView(AdminRequiredMixin, generic.DeleteView):
     model = Category
     template_name = 'admin/categorydelete.html'
     context_object_name = 'category'
@@ -383,7 +385,7 @@ class CategoryDeleteView(generic.DeleteView):
     def get_success_url(self):
         return reverse_lazy('all_categories')
 
-class BrandDeleteView(generic.DeleteView):
+class BrandDeleteView(AdminRequiredMixin, generic.DeleteView):
     model = Brand
     template_name = 'admin/branddelete.html'
     context_object_name = 'brand'
@@ -394,7 +396,7 @@ class BrandDeleteView(generic.DeleteView):
     def get_success_url(self):
         return reverse_lazy('all_brands')
     
-class UserOrdersView(generic.ListView):
+class UserOrdersView(AdminRequiredMixin, generic.ListView):
     model = Order
     template_name = 'admin/userorders.html'
 
@@ -408,7 +410,8 @@ class UserOrdersView(generic.ListView):
         context['orders'] = orders
         
         return context
-    
+
+@admin_required_decorator
 @require_POST
 def update_complaint_status(request, pk):
     complaint = get_object_or_404(Complaints, pk=pk)

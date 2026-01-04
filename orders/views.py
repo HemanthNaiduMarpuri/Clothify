@@ -17,6 +17,7 @@ from .utils import get_total_amount
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+@login_required(login_url='account_login')
 class FavoriteView(View):
     def post(self, request, pk):
         if not request.user.is_authenticated:
@@ -54,6 +55,7 @@ class FavoriteListView(generic.ListView):
         customer = Customer.objects.get(user=self.request.user)
         return Favoriates.objects.filter(customer=customer).select_related('product')
     
+@login_required(login_url='account_login')
 class CartView(View):
     def post(self,request,pk):
         if not request.user.is_authenticated:
@@ -85,7 +87,7 @@ class CartView(View):
 
         return redirect('cart_list')
 
-@login_required
+@login_required(login_url='account_login')
 def cart_view(request):
     try:
         customer = Customer.objects.get(user=request.user)
@@ -137,7 +139,7 @@ def cart_view(request):
     }
     return render(request, 'orders/cart.html', context)
 
-@login_required
+@login_required(login_url='account_login')
 def check_details_view(request):
     try:
         customer = Customer.objects.get(user=request.user)
@@ -187,7 +189,7 @@ def check_details_view(request):
 
     return render(request, 'orders/post_to_checkout.html', context)
 
-@login_required
+@login_required(login_url='account_login')
 def create_checkout_session(request):
     customer = Customer.objects.get(user=request.user)
     cart_items = Cart.objects.filter(customer=customer).select_related('product')
@@ -283,7 +285,7 @@ def create_checkout_session(request):
 
     return redirect(session.url)
 
-@login_required
+@login_required(login_url='account_login')
 def stripe_success(request):
     session_id = request.GET.get('session_id')
     order = get_object_or_404(Order, stripe_session_id=session_id)
@@ -315,7 +317,7 @@ def stripe_success(request):
 
     return render(request, 'orders/success_url.html', context={'order':order})
 
-@login_required
+@login_required(login_url='account_login')
 def stripe_cancel(request):
     session_id = request.GET.get('session_id')
     order = get_object_or_404(Order, stripe_session_id=session_id)
@@ -342,7 +344,7 @@ class OrdersList(generic.ListView):
         
         return qs
     
-@login_required
+@login_required(login_url='account_login')
 def request_return(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 

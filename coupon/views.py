@@ -6,7 +6,7 @@ from accounts.models import Customer
 from orders.utils import get_total_amount
 from .models import Coupon, CouponUsage
 
-@login_required
+@login_required(login_url='account_login')
 def apply_coupon(request):
     if request.method != 'POST':
         return redirect('cart_list')
@@ -40,7 +40,7 @@ def apply_coupon(request):
     messages.success(request, "Cart Applied Successfully")
     return redirect('cart_list')
 
-@login_required
+@login_required(login_url='account_login')
 def remove_coupon(request):
     request.session.pop('coupon_id', None)
     messages.success(request, "Coupon Removed Successfully")

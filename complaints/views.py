@@ -4,17 +4,18 @@ from .models import Complaints
 from django.contrib.auth.decorators import login_required
 from accounts.models import Customer
 from django.contrib import messages
+from dashboard.mixins import AdminRequiredMixin
 
-class ComplaintsListView(generic.ListView):
+class ComplaintsListView(AdminRequiredMixin, generic.ListView):
     model = Complaints
     template_name = 'complaints/complaints_list.html'
     context_object_name = 'complaints'
     ordering = ['-created_at']
 
-@login_required
+@login_required(login_url='account_login')
 def complaint(request):
     customer = Customer.objects.get(user=request.user)
-
+    
     if request.method == 'POST':
         fullname = request.POST.get('name')
         email = request.POST.get('email')

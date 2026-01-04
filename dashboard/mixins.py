@@ -1,19 +1,15 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import AccessMixin
 from django.core.exceptions import PermissionDenied
 
-class RoleRequiredMixin(LoginRequiredMixin):
-    allowed_roles = []
-
+class AdminRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         user = request.user
 
         if not user.is_authenticated:
             return self.handle_no_permission()
         
-        if hasattr(user, 'role') and user.role in self.allowed_roles:
-            return super().dispatch(request, *args, **kwargs)
+        if not user.is_staff or user.user_role != 'admin':
+            raise PermissionDenied
 
-        raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs) 
     
-class AdminRequiredMixin(RoleRequiredMixin):
-    allowed_roles = ['admin']
